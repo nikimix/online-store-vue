@@ -20,6 +20,9 @@
         </ul>
         <button @click="openCart">
           Cart
+          <span>
+            {{numberOfCartPositions}}
+          </span>
         </button>
       </nav>
     </header>
@@ -28,83 +31,67 @@
           v-for="product of products"
           class="product-list__item"
       >
-        <product-card
+        <store-product-card
             :card="product"
-            @add-to-cart="addToCart"
-            class="product-list__card"
+            class="product-list__product-card"
+            @add-new-item-to-cart="addCartItemById"
         >
-        </product-card>
+        </store-product-card>
       </li>
     </ul>
-    <dialog
-        :open="isOpenCart"
+    <store-cart
+        v-show="isOpenedCart"
+        :cart-items="cartItems"
+        @close-cart="closeCart"
+        @remove-cart-item-by-id="removeCartItemById"
+
     >
-      <div v-show="cartItems.length">
-        <ul>
-          <li
-              v-for="cartItem of cartItems"
-              :key="cartItem.value.product.id"
-          >
-            <cart-item
-                :cart-item="cartItem"
-                @remove-from-cart="removeFromCart"
-            >
-            </cart-item>
-          </li>
-        </ul>
-        <div>Total sum of all products: {{ totalSum }}$</div>
-      </div>
-      <div v-show="!cartItems.length"> There are no products</div>
-      <button @click="closeCart">X</button>
-    </dialog>
+    </store-cart>
   </div>
 
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
-import ProductCard from './components/ProductCard.vue';
-import CartItem from './components/CartItem.vue';
+import {computed, onMounted, ref, watch} from 'vue';
+import StoreProductCard from './components/StoreProductCard.vue';
+import StoreCart from './components/StoreCart.vue'
 
 const products = ref([]);
-const cartItems = ref([]);
-const isOpenCart = ref(false);
-
-const totalSum = computed(() =>
-    cartItems.value.reduce((acc, { value: { quantity, product } }) => acc + quantity * product.price, 0)
-);
+const cartItems = ref({});
+const isOpenedCart = ref(false);
 
 const getProducts = async () => {
   const res = await fetch('https://dummyjson.com/products');
   return (await res.json()).products;
 };
 
+const numberOfCartPositions = computed(() => Object.keys(cartItems.value).length);
+
 onMounted(async () => {
   products.value = await getProducts();
 });
 
-const addToCart = (product) => {
-  const cartItem = cartItems.value.find(({ value }) => value.product === product);
-  if (cartItem) {
-    cartItem.value.quantity++;
+const addCartItemById = (productCard) => {
+  if (cartItems.value[productCard.id]) {
+    cartItems.value[productCard.id].quantity++;
   } else {
-    cartItems.value.unshift(ref({ quantity: 1, product }));
+    cartItems.value[productCard.id] = {
+      quantity: 1,
+      productCard
+    };
   }
 };
 
 const openCart = () => {
-  isOpenCart.value = true;
+  isOpenedCart.value = true;
 };
 
 const closeCart = () => {
-  isOpenCart.value = false;
-};
+  isOpenedCart.value = false;
+}
 
-const removeFromCart = (cartItem) => {
-  const index = cartItems.value.findIndex(({ value }) => value === cartItem.value);
-  cartItems.value.splice(index, 1);
-
-  console.log(cartItems.value);
+const removeCartItemById = (id) => {
+  delete cartItems.value[id];
 };
 </script>
 
@@ -117,10 +104,15 @@ const removeFromCart = (cartItem) => {
 
 .product-list {
   display: grid;
-  margin: 0;
-  padding: 0;
+  width: min-content;
   grid-template-columns: repeat(4, auto);
+  justify-items: center;
   gap: 2rem;
+}
+
+.cart-list {
+  display: grid;
+  row-gap: 1rem;
 }
 
 .nav {
@@ -134,10 +126,7 @@ const removeFromCart = (cartItem) => {
   display: flex;
   min-width: 200px;
   height: min-content;
-  margin: 0;
-  padding: 0;
   justify-content: space-between;
-  list-style: none;
 
   &__link {
     font-size: 1em;

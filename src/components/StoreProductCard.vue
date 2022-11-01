@@ -5,26 +5,31 @@
         :alt="`picture of ${title}`"
         class="product-card__image">
     <div class="product-card__title">{{ title }}</div>
-    <div class="product-card__description">{{ description }}</div>
     <div class="product-card__price">Price: {{ price }}$</div>
-    <button @click="addToCart" class="product-card__button">Add to cart</button>
+    <button
+        @click="addNewItemToCart"
+        class="product-card__button"
+    >Add to cart
+    </button>
   </article>
 </template>
+
 <script setup>
-const emit = defineEmits(['addToCart']);
-const props = defineProps({
+const emit = defineEmits(['addNewItemToCart']);
+const {card} = defineProps({
   card: {
     type: Object,
     required: true,
   }
 });
 
-const { title, price, images: [imageUrl], description } = props.card;
+const {title, price, images: [imageUrl]} = card;
 
-const addToCart = () => {
-  emit('addToCart', props.card);
+const addNewItemToCart = () => {
+  emit('addNewItemToCart', card);
 };
 </script>
+
 <style scoped lang="scss">
 .product-card {
   display: flex;
@@ -38,8 +43,8 @@ const addToCart = () => {
 
   &__image {
     display: block;
-    width: 250px;
-    height: 250px;
+    width: 200px;
+    height: 200px;
     border-radius: 8px;
   }
 
