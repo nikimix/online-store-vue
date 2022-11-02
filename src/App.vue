@@ -21,7 +21,7 @@
         <button @click="openCart">
           Cart
           <span>
-            {{numberOfCartPositions}}
+            {{ numberOfCartPositions }}
           </span>
         </button>
       </nav>
@@ -40,11 +40,10 @@
       </li>
     </ul>
     <store-cart
-        v-show="isOpenedCart"
+        v-if="isOpenedCart"
         :cart-items="cartItems"
-        @close-cart="closeCart"
         @remove-cart-item-by-id="removeCartItemById"
-
+        @close-cart="closeCart"
     >
     </store-cart>
   </div>
@@ -52,7 +51,7 @@
 </template>
 
 <script setup>
-import {computed, onMounted, ref, watch} from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import StoreProductCard from './components/StoreProductCard.vue';
 import StoreCart from './components/StoreCart.vue'
 
@@ -96,7 +95,6 @@ const removeCartItemById = (id) => {
 </script>
 
 <style scoped lang="scss">
-
 .store {
   display: grid;
   row-gap: 2rem;
@@ -108,11 +106,6 @@ const removeCartItemById = (id) => {
   grid-template-columns: repeat(4, auto);
   justify-items: center;
   gap: 2rem;
-}
-
-.cart-list {
-  display: grid;
-  row-gap: 1rem;
 }
 
 .nav {

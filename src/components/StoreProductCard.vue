@@ -7,9 +7,10 @@
     <div class="product-card__title">{{ title }}</div>
     <div class="product-card__price">Price: {{ price }}$</div>
     <button
-        @click="addNewItemToCart"
         class="product-card__button"
-    >Add to cart
+        @click="addItemToCart"
+    >
+      Add to cart
     </button>
   </article>
 </template>
@@ -25,12 +26,13 @@ const {card} = defineProps({
 
 const {title, price, images: [imageUrl]} = card;
 
-const addNewItemToCart = () => {
+const addItemToCart = () => {
   emit('addNewItemToCart', card);
 };
 </script>
 
 <style scoped lang="scss">
+@import '../main.scss';
 .product-card {
   display: flex;
   box-sizing: border-box;
@@ -39,8 +41,7 @@ const addNewItemToCart = () => {
   height: 100%;
   padding: 10px 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.25);
-
+  @include box-shadow-1;
   &__image {
     display: block;
     width: 200px;
@@ -54,6 +55,10 @@ const addNewItemToCart = () => {
 
   &__button {
     margin-top: auto;
+    transition: .3s;
+    &:hover {
+      @include box-shadow-1
+    }
   }
 }
 </style>
