@@ -5,25 +5,15 @@
         :alt="`picture of ${title}`"
         class="cart-item__image"
     >
-    <div class="cart-item__text-content">
+    <div>
       <div class="cart-item__title">{{ title }}</div>
-      <div class="cart-item__price">Price: {{ price }}$</div>
-      <div class="cart-item__quantity">Quantity: {{ quantity }}</div>
-      <div class="cart-item__price">Price: {{ totalPrice }}$</div>
+      <div>Price: {{ price }}$</div>
+      <div>Quantity: {{ quantity }}</div>
+      <div>Price: {{ totalPrice }}$</div>
     </div>
-    <div class="cart-item__controls cart-item-controls">
-      <button
-          class="cart-item__button"
-          @click="incrementItem"
-      >
-        +
-      </button>
-      <button
-          class="cart-item__button"
-          @click="decrementItem"
-      >
-        -
-      </button>
+    <div class="cart-item-controls">
+      <button @click="incrementItem">+</button>
+      <button @click="decrementItem">-</button>
     </div>
   </article>
 </template>
@@ -60,7 +50,7 @@ const decrementItem = () => {
 </script>
 
 <style scoped lang="scss">
-@import '../main.scss';
+@use '../main.scss';
 
 .cart-item {
   display: grid;
@@ -70,7 +60,7 @@ const decrementItem = () => {
   &__image {
     width: 100px;
     height: 100px;
-    @include box-shadow-1;
+    @include main.box-shadow-1;
   }
 
   &__title {

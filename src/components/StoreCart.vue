@@ -1,26 +1,18 @@
 <template>
   <dialog
       ref="dialog"
-      class="store__cart cart"
+      class="cart"
   >
     <div
         v-show="isCartEmpty"
-        class="cart__content-wrapper"
+        class="content-block"
     >
-      <ul class="cart__list cart-list">
-        <li
-            v-for="(cartItem, key) in cartItems"
-            :key="key"
-            class="cart-list__item"
-        >
-          <store-cart-item
-              :cart-item="cartItem"
-              class="cart-list__cart-item"
-              @remove-cart-item-by-id="removeCartItemById"
-          >
-          </store-cart-item>
-        </li>
-      </ul>
+      <store-cart-item
+          v-for="(cartItem, key) in cartItems"
+          :key="key"
+          :cart-item="cartItem"
+          @remove-cart-item-by-id="removeCartItemById"
+      />
       <div class="cart__total-sum">Total sum of products: {{ totalSum }}$</div>
     </div>
     <div
@@ -56,7 +48,7 @@ const totalSum = computed(() => {
   return Object.values(cartItems).reduce((acc, {
     quantity,
     productCard
-  }) => acc += quantity * productCard.price, 0);
+  }) => (acc + (quantity * productCard.price)), 0);
 });
 
 const isCartEmpty = computed(() => Object.keys(cartItems).length);
@@ -82,11 +74,6 @@ const removeCartItemById = (id) => {
   max-height: 60%;
   border: none;
   border-radius: 10px;
-
-  &__content-wrapper {
-    display: grid;
-    row-gap: 2rem;
-  }
 
   &__message-empty-cart,
   &__total-sum {
@@ -135,8 +122,13 @@ const removeCartItemById = (id) => {
   }
 
   &::backdrop {
-    background-color: rgba(0,0,0,.7);
+    background-color: rgba(0, 0, 0, .7);
   }
+}
+
+.content-block {
+  display: grid;
+  row-gap: 2rem;
 }
 
 .cart-list {

@@ -3,7 +3,8 @@
     <img
         :src="imageUrl"
         :alt="`picture of ${title}`"
-        class="product-card__image">
+        class="product-card__image"
+    >
     <div class="product-card__title">{{ title }}</div>
     <div class="product-card__price">Price: {{ price }}$</div>
     <button
@@ -16,7 +17,7 @@
 </template>
 
 <script setup>
-const emit = defineEmits(['addNewItemToCart']);
+const emit = defineEmits(['addItemToCart']);
 const {card} = defineProps({
   card: {
     type: Object,
@@ -27,12 +28,13 @@ const {card} = defineProps({
 const {title, price, images: [imageUrl]} = card;
 
 const addItemToCart = () => {
-  emit('addNewItemToCart', card);
+  emit('addItemToCart', card);
 };
 </script>
 
 <style scoped lang="scss">
-@import '../main.scss';
+@use '../main.scss';
+
 .product-card {
   display: flex;
   box-sizing: border-box;
@@ -41,7 +43,8 @@ const addItemToCart = () => {
   height: 100%;
   padding: 10px 20px;
   border-radius: 8px;
-  @include box-shadow-1;
+  @include main.box-shadow-1;
+
   &__image {
     display: block;
     width: 200px;
@@ -57,7 +60,7 @@ const addItemToCart = () => {
     margin-top: auto;
     transition: .3s;
     &:hover {
-      @include box-shadow-1
+      @include main.box-shadow-1;
     }
   }
 }

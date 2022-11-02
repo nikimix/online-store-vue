@@ -1,23 +1,19 @@
 <template>
   <div class="store">
-    <header class="store__header header">
-      <nav class="header__nav nav">
-        <ul class="nav__list nav-list">
-          <li class="nav-list__item">
-            <a class="nav-list__link"
-               href="#"
-            >
-              Home
-            </a>
-          </li>
-          <li class="nav-list__item">
-            <a class="nav-list__link"
-               href="#"
-            >
-              Product
-            </a>
-          </li>
-        </ul>
+    <header>
+      <nav class="nav">
+        <a
+            class="nav__link"
+            href="#"
+        >
+          Home
+        </a>
+        <a
+            class="nav__link"
+            href="#"
+        >
+          Product
+        </a>
         <button @click="openCart">
           Cart
           <span>
@@ -26,26 +22,20 @@
         </button>
       </nav>
     </header>
-    <ul class="store__products-list product-list">
-      <li
+    <div class="product-list">
+      <store-product-card
           v-for="product of products"
-          class="product-list__item"
-      >
-        <store-product-card
-            :card="product"
-            class="product-list__product-card"
-            @add-new-item-to-cart="addCartItemById"
-        >
-        </store-product-card>
-      </li>
-    </ul>
+          :key="product.id"
+          :card="product"
+          @add-item-to-cart="addProductCardToCartById"
+      />
+    </div>
     <store-cart
         v-if="isOpenedCart"
         :cart-items="cartItems"
-        @remove-cart-item-by-id="removeCartItemById"
+        @remove-cart-item-by-id="removeProductCardFromCartById"
         @close-cart="closeCart"
-    >
-    </store-cart>
+    />
   </div>
 
 </template>
@@ -59,18 +49,18 @@ const products = ref([]);
 const cartItems = ref({});
 const isOpenedCart = ref(false);
 
-const getProducts = async () => {
+
+const getAllProducts = async () => {
   const res = await fetch('https://dummyjson.com/products');
   return (await res.json()).products;
 };
 
-const numberOfCartPositions = computed(() => Object.keys(cartItems.value).length);
-
 onMounted(async () => {
-  products.value = await getProducts();
+  products.value = await getAllProducts();
 });
 
-const addCartItemById = (productCard) => {
+
+const addProductCardToCartById = (productCard) => {
   if (cartItems.value[productCard.id]) {
     cartItems.value[productCard.id].quantity++;
   } else {
@@ -81,6 +71,11 @@ const addCartItemById = (productCard) => {
   }
 };
 
+const removeProductCardFromCartById = (id) => {
+  delete cartItems.value[id];
+};
+
+
 const openCart = () => {
   isOpenedCart.value = true;
 };
@@ -88,10 +83,8 @@ const openCart = () => {
 const closeCart = () => {
   isOpenedCart.value = false;
 }
+const numberOfCartPositions = computed(() => Object.keys(cartItems.value).length);
 
-const removeCartItemById = (id) => {
-  delete cartItems.value[id];
-};
 </script>
 
 <style scoped lang="scss">
@@ -112,13 +105,6 @@ const removeCartItemById = (id) => {
   display: flex;
   align-items: center;
   padding: 0 100px;
-  justify-content: space-between;
-}
-
-.nav-list {
-  display: flex;
-  min-width: 200px;
-  height: min-content;
   justify-content: space-between;
 
   &__link {
